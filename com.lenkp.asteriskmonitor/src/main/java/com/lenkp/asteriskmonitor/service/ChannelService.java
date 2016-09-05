@@ -4,6 +4,12 @@ import java.util.List;
 
 import ch.loway.oss.ari4java.generated.Channel;
 
+/**
+ * Type for channel service
+ * 
+ * @author mbahhalim
+ *
+ */
 public interface ChannelService {
 
 	/**

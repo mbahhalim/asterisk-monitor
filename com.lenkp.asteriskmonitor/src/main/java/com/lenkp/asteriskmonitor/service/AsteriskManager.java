@@ -11,6 +11,12 @@ import ch.loway.oss.ari4java.ARI;
 import ch.loway.oss.ari4java.AriFactory;
 import ch.loway.oss.ari4java.AriVersion;
 
+/**
+ * This class is for managing Asterisk connection
+ * 
+ * @author mbahhalim
+ *
+ */
 public final class AsteriskManager {
 
 	public final static Logger LOGGER =

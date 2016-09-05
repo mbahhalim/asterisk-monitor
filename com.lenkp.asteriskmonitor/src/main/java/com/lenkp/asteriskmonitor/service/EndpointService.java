@@ -4,6 +4,12 @@ import java.util.List;
 
 import ch.loway.oss.ari4java.generated.Endpoint;
 
+/**
+ * Type for endpoint service
+ * 
+ * @author mbahhalim
+ *
+ */
 public interface EndpointService {
 
 	/**

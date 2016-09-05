@@ -2,13 +2,12 @@ package com.lenkp.asteriskmonitor.dao;
 
 import java.util.List;
 
-//TODO (Halim) Create dao classes
 public interface Dao {
 
 	/**
 	 * @return all item from database
 	 */
-	public List<Object> getAll();
+	public List<Dao> getAll();
 	
 	/**
 	 * Update an item in database
@@ -18,7 +17,7 @@ public interface Dao {
 	public void update(Object object);
 	
 	/**
-	 * Delete an item from database
+	 * Delete an item in database
 	 * 
 	 * @param object
 	 */

@@ -2,6 +2,13 @@ package com.lenkp.asteriskmonitor.service;
 
 import java.util.logging.Logger;
 
+/**
+ * This class is for accessing the services
+ * A service is a singleton object
+ * 
+ * @author mbahhalim
+ *
+ */
 public class ServiceLocator {
 
 	public final static Logger LOGGER =

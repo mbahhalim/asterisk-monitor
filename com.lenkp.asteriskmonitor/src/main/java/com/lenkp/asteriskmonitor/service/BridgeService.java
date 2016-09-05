@@ -4,6 +4,12 @@ import java.util.List;
 
 import ch.loway.oss.ari4java.generated.Bridge;
 
+/**
+ * Type for bridge service
+ * 
+ * @author mbahhalim
+ *
+ */
 public interface BridgeService {
 
 	/**
