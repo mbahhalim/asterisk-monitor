@@ -11,6 +11,8 @@ import java.awt.event.MouseListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -30,6 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
@@ -71,6 +74,9 @@ public class Main {
 	public static int rowSelected = -1;
 	public static JTable tableSelected;
 	public static int previousBridgeTotal = 0;
+	
+	public static String sipIdTable;
+	public static String hostIDTable; 
 
 	/**
 	 * Launch the application.
@@ -143,6 +149,7 @@ public class Main {
 		DefaultTableModel tableModelEndPoints = new DefaultTableModel(new String[] { "Name","Host","State","Action"},0);
 		DefaultTableModel tableModelBridges = new DefaultTableModel(new String[] { "Name", "Action" },0);
 		DefaultTableModel bridgesChannelsModel = new DefaultTableModel(new String[] { "ID","Name","State","Action"},0);
+		DefaultTableModel PTUDataBaseModel = new DefaultTableModel(new String[] { "SIP ID","Host","PTU username","PTU password","action","action"},0);
 		
 		List<DefaultTableModel> bridgesChannelsModelList = new ArrayList<DefaultTableModel>();
 		
@@ -188,6 +195,191 @@ public class Main {
 		
 		panel_1.add(scrollPane_1);
 		panel_1.add(scrollPane_2);
+		
+		//===== Third Tab =====//
+		JPanel dataBaseConfigPanel = new JPanel();
+		tabbedPane.addTab("DataBase Configuration", null, dataBaseConfigPanel, null);
+		dataBaseConfigPanel.setLayout(null);
+		dataBaseConfigPanel.setBackground(Color.WHITE);
+		
+		JTable dataBaseTables = new JTable();
+		ServiceLocator.getDatabaseService().setDbPath("/home/mbahhalim/Documents/PTURemote.db");
+		ResultSet rs = ServiceLocator.getDatabaseService().selectAllFromTable("PTUInfo");
+		
+		try {
+			while (rs.next()) {
+				PTUDataBaseModel.addRow(new Object[] {rs.getInt("sipId"),rs.getString("hostId"),rs.getString("ptuUsername"),rs.getString("ptuPassword"),"edit","delete"});
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		dataBaseTables.setModel(PTUDataBaseModel);
+		dataBaseTables.setRowHeight(25);
+		
+		JTextField sipIdField = new JTextField();
+		sipIdField.setFont(new Font("Dialog", Font.PLAIN, 12));
+		sipIdField.setBounds(620, 50, 215, 30);
+		sipIdField.setVisible(false);
+		
+		JTextField hostIdField = new JTextField();
+		hostIdField.setFont(new Font("Dialog", Font.PLAIN, 12));
+		hostIdField.setBounds(620, 90, 215, 30);
+		hostIdField.setVisible(false);
+		
+		JTextField ptuUsernameField = new JTextField();
+		ptuUsernameField.setFont(new Font("Dialog", Font.PLAIN, 12));
+		ptuUsernameField.setBounds(620, 130, 215, 30);
+		ptuUsernameField.setVisible(false);
+		
+		JTextField ptuPasswordField = new JTextField();
+		ptuPasswordField.setFont(new Font("Dialog", Font.PLAIN, 12));
+		ptuPasswordField.setBounds(620, 170, 215, 30);
+		ptuPasswordField.setVisible(false);
+		
+		JButton updateDoneButton = new JButton("done");
+		updateDoneButton.setBounds(620, 210, 100, 30);
+		updateDoneButton.setVisible(false);
+		
+		JButton insertDoneButton = new JButton("done");
+		insertDoneButton.setBounds(620, 210, 100, 30);
+		insertDoneButton.setVisible(false);
+		
+		updateDoneButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				ServiceLocator.getDatabaseService().updatePTUTable("PTUInfo", sipIdField.getText(), hostIdField.getText(), ptuUsernameField.getText(), ptuPasswordField.getText());
+
+				ResultSet rs = ServiceLocator.getDatabaseService().selectAllFromTable("PTUInfo");
+				PTUDataBaseModel.setRowCount(0);
+				
+				try {
+					while (rs.next()) {
+						PTUDataBaseModel.addRow(new Object[] {rs.getInt("sipId"),rs.getString("hostId"),rs.getString("ptuUsername"),rs.getString("ptuPassword"),"edit","delete"});
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				
+				dataBaseTables.setModel(PTUDataBaseModel);
+			}
+		});
+		
+		insertDoneButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ServiceLocator.getDatabaseService().insertDataPTUTable("PTUInfo", sipIdField.getText(), hostIdField.getText(), ptuUsernameField.getText(), ptuPasswordField.getText());
+				
+				ResultSet rs = ServiceLocator.getDatabaseService().selectAllFromTable("PTUInfo");
+				PTUDataBaseModel.setRowCount(0);
+				
+				try {
+					while (rs.next()) {
+						PTUDataBaseModel.addRow(new Object[] {rs.getInt("sipId"),rs.getString("hostId"),rs.getString("ptuUsername"),rs.getString("ptuPassword"),"edit","delete"});
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				
+				dataBaseTables.setModel(PTUDataBaseModel);
+			}
+		});
+		
+		dataBaseConfigPanel.add(sipIdField);
+		dataBaseConfigPanel.add(hostIdField);
+		dataBaseConfigPanel.add(ptuUsernameField);
+		dataBaseConfigPanel.add(ptuPasswordField);
+		dataBaseConfigPanel.add(updateDoneButton);
+		dataBaseConfigPanel.add(insertDoneButton);
+		
+		Action dataBaseEditButton = new AbstractAction() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				insertDoneButton.setVisible(false);
+				
+				JTable table = (JTable)e.getSource();
+                int modelRow = Integer.valueOf( e.getActionCommand() );
+                System.out.println("edit "+ table.getValueAt(modelRow, 0));
+                
+                sipIdField.setText(table.getValueAt(modelRow, 0).toString());
+                sipIdField.setEditable(false);
+                sipIdField.setVisible(true);
+			
+                hostIdField.setText(table.getValueAt(modelRow, 1).toString());
+                hostIdField.setVisible(true);
+                
+                ptuUsernameField.setText(table.getValueAt(modelRow, 2).toString());
+                ptuUsernameField.setVisible(true);
+                
+                ptuPasswordField.setText(table.getValueAt(modelRow, 3).toString());
+                ptuPasswordField.setVisible(true);
+                
+                updateDoneButton.setVisible(true);
+			}
+		};
+		new ButtonColumn(dataBaseTables, dataBaseEditButton, 4);
+		
+		Action dataBaseDeleteButton = new AbstractAction() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTable table = (JTable)e.getSource();
+                int modelRow = Integer.valueOf( e.getActionCommand() );
+                
+                ServiceLocator.getDatabaseService().deleteDataPTUTable("PTUInfo", table.getValueAt(modelRow, 0).toString());
+			
+                ResultSet rs = ServiceLocator.getDatabaseService().selectAllFromTable("PTUInfo");
+				PTUDataBaseModel.setRowCount(0);
+				
+				try {
+					while (rs.next()) {
+						PTUDataBaseModel.addRow(new Object[] {rs.getInt("sipId"),rs.getString("hostId"),rs.getString("ptuUsername"),rs.getString("ptuPassword"),"edit","delete"});
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				
+				dataBaseTables.setModel(PTUDataBaseModel);
+			}
+		};
+		new ButtonColumn(dataBaseTables, dataBaseDeleteButton, 5);
+		
+		JScrollPane dataBaseScrollpane = new JScrollPane(dataBaseTables);
+		dataBaseScrollpane.setBounds(12, 50, 600, 385);
+		dataBaseScrollpane.setVisible(true);
+		
+		JButton insertDataButton = new JButton("insert data");
+		insertDataButton.setBounds(12, 12, 100, 30);
+		insertDataButton.setVisible(true);
+		insertDataButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateDoneButton.setVisible(false);
+				
+				sipIdField.setText(null);
+				hostIdField.setText(null);
+				ptuUsernameField.setText(null);
+				ptuPasswordField.setText(null);
+				
+				sipIdField.setEditable(true);
+				
+				sipIdField.setVisible(true);
+				hostIdField.setVisible(true);
+				ptuUsernameField.setVisible(true);
+				ptuPasswordField.setVisible(true);
+				
+				insertDoneButton.setVisible(true);
+			}
+		});
+		
+		dataBaseConfigPanel.add(dataBaseScrollpane);
+		dataBaseConfigPanel.add(insertDataButton);
+		
 		
 		Timer timer = new Timer(100, new ActionListener() {
 			@Override
@@ -242,6 +434,9 @@ public class Main {
 		                int modelRow = Integer.valueOf( e.getActionCommand() );
 		                System.out.println(table.getModel().getValueAt(modelRow, 0).toString());
 		                
+		                sipIdTable = table.getModel().getValueAt(modelRow, 0).toString();
+		                hostIDTable = table.getModel().getValueAt(modelRow, 1).toString();
+		                
 		        		sipLabel.setText("SIP : " + table.getModel().getValueAt(modelRow, 0).toString());
 		        		
 		        		sipLabel.setFont(new Font("Sans", Font.BOLD, 12));
@@ -251,6 +446,35 @@ public class Main {
 		        		hostSipLabel.setFont(new Font("Sans", Font.BOLD, 12));
 		        		
 		        		button.setText("Edit");
+		        		button.addActionListener(new ActionListener() {
+							String PTUUsername = null;
+							String PTUPassword = null;
+							String PTUHost = null;
+							
+							@Override
+							public void actionPerformed(ActionEvent e) {
+				                
+				                ResultSet rs = ServiceLocator.getDatabaseService().selectAllFromTable("PTUInfo");
+				                try {
+									while (rs.next()) {
+										if (String.valueOf(rs.getInt("sipId")).equals(sipIdTable)) {
+											PTUUsername = rs.getString("ptuUsername");
+											PTUPassword = rs.getString("ptuPassword");
+											PTUHost = rs.getString("hostId");
+										}
+									}
+								} catch (SQLException e1) {
+									e1.printStackTrace();
+								}
+				                
+								ServiceLocator.getRemoteSshService().connectToHost(PTUHost, PTUUsername, PTUPassword);
+								ServiceLocator.getRemoteSshService().openSFTP();
+								ServiceLocator.getRemoteSshService().takePTUInfo("/home/"+PTUUsername+"/linphone.rc");
+								
+								EditPTUFrame editPTUFrame = new EditPTUFrame();
+								editPTUFrame.setVisible(true);
+							}
+						});
 		        		button.setVisible(true);
 		            }
 		        };

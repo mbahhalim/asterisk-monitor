@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import com.lenkp.asteriskmonitor.gui.AsteriskConnectionSettings;
+
 import ch.loway.oss.ari4java.ARI;
 import ch.loway.oss.ari4java.AriFactory;
 import ch.loway.oss.ari4java.AriVersion;
@@ -68,6 +70,10 @@ public final class AsteriskManager {
 	            OutputStream out = new FileOutputStream(file);
 	            
 	            properties.store(out, null);
+	            
+	            AsteriskConnectionSettings settingFrame = new AsteriskConnectionSettings();
+				
+				settingFrame.setVisible(true);
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }

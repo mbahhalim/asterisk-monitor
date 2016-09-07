@@ -26,9 +26,9 @@ public class EndpointServiceTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
-	public final void testGetEndpoints() {
-		fail("Not yet implemented"); // TODO
-	}
+//	@Test
+//	public final void testGetEndpoints() {
+//		fail("Not yet implemented"); // TODO
+//	}
 
 }

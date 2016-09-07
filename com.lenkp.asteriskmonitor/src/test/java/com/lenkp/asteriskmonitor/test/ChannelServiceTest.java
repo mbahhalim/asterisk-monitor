@@ -26,14 +26,14 @@ public class ChannelServiceTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
-	public final void testGetChannels() {
-		fail("Not yet implemented"); // TODO
-	}
+//	@Test
+//	public final void testGetChannels() {
+//		fail("Not yet implemented"); // TODO
+//	}
 
-	@Test
-	public final void testHangUpChannel() {
-		fail("Not yet implemented"); // TODO
-	}
+//	@Test
+//	public final void testHangUpChannel() {
+//		fail("Not yet implemented"); // TODO
+//	}
 
 }

@@ -31,4 +31,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     
     compile 'ch.loway.oss.ari4java:ari4java:0.3.4'
+    compile group: 'com.jcraft', name: 'jsch', version: '0.1.44-1'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.11.2'
 }

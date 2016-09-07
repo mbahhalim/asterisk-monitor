@@ -23,6 +23,12 @@ public class ServiceLocator {
 	private final static EndpointService ENDPOINT_SERVICE =
 			new EndpointServiceProvider();
 	
+	private final static DatabaseService DATABASE_SERVICE =
+			new DatabaseServiceProvider();
+	
+	private final static RemoteSshService REMOTE_SERVICE =
+			new RemoteSshServiceProvider();
+	
 	/**
 	 * @return an instance of bridge service
 	 */
@@ -45,6 +51,16 @@ public class ServiceLocator {
 	public static EndpointService getEndpointService() {
 		LOGGER.info("Get instance for endpoint service");
 		return ENDPOINT_SERVICE;
+	}
+	
+	public static DatabaseService getDatabaseService() {
+		LOGGER.info("Get instance for sqlite service");
+		return DATABASE_SERVICE;
+	}
+	
+	public static RemoteSshService getRemoteSshService() {
+		LOGGER.info("Get instance Remote SSH service");
+		return REMOTE_SERVICE;
 	}
 	
 }
